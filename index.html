@@ -514,11 +514,7 @@
       mkDose("med_loxo", daysAgo(10,8,30), "関節痛", [
         mkCheckin("onset", 40, {effectLevel:2}),
         mkCheckin("final", 150, {effectLevel:2, symptomChange:"improved", rating:4, note:""})
-      ]),
-      // one still being monitored, so the live timer UI has something to show
-      mkDose("med_calo", minutesAgo(52), "発熱", [], {nrsBefore:5}),
-      // an analgesic dose (medical narcotic) still awaiting its post-dose NRS check
-      mkDose("med_oxynorm", minutesAgo(25), "突出痛", [], {nrsBefore:7})
+      ])
     ];
 
     return { meds: meds, doses: doses };
@@ -1199,7 +1195,10 @@
     html += '<div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-start;">';
     html += '<div><div style="font-weight:700;font-size:15px;">'+esc(med?med.name:"（削除された薬）")+' <span style="font-weight:400;color:var(--ink-muted);font-size:12.5px;">'+esc(med?med.dose+med.unit:"")+'</span></div>';
     html += '<div style="font-size:12.5px;color:var(--ink-secondary);margin-top:2px;">'+esc(dose.trigger)+'・服用 <span class="num">'+fmtTimeOnly(dose.takenAt)+'</span></div></div>';
+    html += '<div style="display:flex;gap:6px;flex-shrink:0;">';
     html += '<button class="btn btn-sm btn-ghost" data-action="hx-toggle" data-id="'+dose.id+'">'+(expanded?"閉じる":"詳細")+'</button>';
+    html += '<button class="btn btn-sm" data-action="hx-delete" data-id="'+dose.id+'">削除</button>';
+    html += '</div>';
     html += '</div>';
     html += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;">'+badges+'</div>';
 
@@ -1245,6 +1244,23 @@
         var id = btn.getAttribute("data-id");
         expandedHistoryId = expandedHistoryId===id ? null : id;
         renderHistoryView();
+      });
+    });
+    document.querySelectorAll('[data-action="hx-delete"]').forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var id = btn.getAttribute("data-id");
+        if(btn.getAttribute("data-armed")==="1"){
+          state.doses = state.doses.filter(function(d){ return d.id!==id; });
+          saveState();
+          renderHistoryView();
+          renderNav();
+          toast("削除しました");
+        } else {
+          btn.setAttribute("data-armed","1");
+          btn.textContent = "本当に削除";
+          btn.classList.add("btn-danger-outline");
+          setTimeout(function(){ if(btn.isConnected){ btn.setAttribute("data-armed","0"); btn.textContent="削除"; btn.classList.remove("btn-danger-outline"); } }, 3000);
+        }
       });
     });
   }
