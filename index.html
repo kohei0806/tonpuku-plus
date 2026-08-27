@@ -438,6 +438,7 @@
   var TRIGGERS = ["頭痛","生理痛","発熱","腹痛","不安・不眠","歯痛・関節痛","突出痛","その他"];
   var SIDE_EFFECTS = ["眠気","吐き気","めまい","胃部不快感","便秘","発疹・かゆみ","動悸","口の渇き","呼吸抑制","その他"];
   var NRS_SCALE = [0,1,2,3,4,5,6,7,8,9,10];
+  var AMOUNT_OPTIONS = [0.5,1,1.5,2,2.5,3,4];
   var SEVERITIES = [
     {v:"mild", label:"軽度", cls:"warning"},
     {v:"moderate", label:"中等度", cls:"serious"},
@@ -969,7 +970,7 @@
     html += '  <span class="hint">0：痛みなし　10：これまでで最も強い痛み</span>';
     html += '</div>';
 
-    html += '<div class="field"><label>用量</label><input class="input" id="lf-amount" value="'+esc(pendingForm.amount)+'"></div>';
+    html += '<div class="field" style="grid-column:1/-1;"><label>1回に飲む量</label><div style="display:flex;gap:6px;flex-wrap:wrap;" id="lf-amount-chips">'+amountChipsHtml(selectedMed?selectedMed.unit:"回分")+'</div></div>';
     html += '<div class="field"><label>メモ<span class="hint">任意</span></label><input class="input" id="lf-note" value="'+esc(pendingForm.note)+'" placeholder="例：外出前に念のため"></div>';
 
     html += '</div>';
@@ -977,6 +978,24 @@
 
     card.innerHTML = html;
     wireLogForm();
+  }
+
+  function amountChipsHtml(unit){
+    var html = "";
+    AMOUNT_OPTIONS.forEach(function(n){
+      var label = n+unit;
+      html += '<button type="button" class="chip'+(pendingForm.amount===label?" selected":"")+'" data-amount="'+esc(label)+'" style="min-width:52px;justify-content:center;">'+esc(label)+'</button>';
+    });
+    return html;
+  }
+  function wireAmountChips(){
+    document.querySelectorAll("#lf-amount-chips .chip").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        pendingForm.amount = btn.getAttribute("data-amount");
+        document.querySelectorAll("#lf-amount-chips .chip").forEach(function(b){ b.classList.remove("selected"); });
+        btn.classList.add("selected");
+      });
+    });
   }
 
   function filterMeds(query){
@@ -1035,8 +1054,8 @@
       pendingForm.amount = m.dose+m.unit;
       hiddenInput.value = id;
       searchInput.value = m.name;
-      var amountEl = document.getElementById("lf-amount");
-      if(amountEl) amountEl.value = pendingForm.amount;
+      var amountWrap = document.getElementById("lf-amount-chips");
+      if(amountWrap){ amountWrap.innerHTML = amountChipsHtml(m.unit); wireAmountChips(); }
       closeCombo();
       syncMedFlagsSection();
     }
@@ -1079,7 +1098,7 @@
     wireMedCombobox();
     syncMedFlagsSection();
     document.getElementById("lf-time").addEventListener("change", function(e){ pendingForm.takenAt = e.target.value; });
-    document.getElementById("lf-amount").addEventListener("input", function(e){ pendingForm.amount = e.target.value; });
+    wireAmountChips();
     document.getElementById("lf-note").addEventListener("input", function(e){ pendingForm.note = e.target.value; });
     document.querySelectorAll("#lf-triggers .chip").forEach(function(btn){
       btn.addEventListener("click", function(){
