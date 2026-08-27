@@ -456,8 +456,6 @@
   /* ============ SEED / STATE ============ */
   function uid(prefix){ return prefix + "_" + Math.random().toString(36).slice(2,9); }
   function minutesAgo(m){ return new Date(Date.now() - m*60000).toISOString(); }
-  function hoursAgo(h){ return minutesAgo(h*60); }
-  function daysAgo(d,h,m){ return minutesAgo(d*1440 + (h||0)*60 + (m||0)); }
 
   function seedData(){
     var meds = [
@@ -469,73 +467,13 @@
       { id:"med_abstral", name:"アブストラル舌下錠100μg", dose:"1", unit:"錠", indication:"突出痛（がん性疼痛のレスキュー）", prescriber:"緩和ケア科（佐藤医師）", maxPerDay:4, isAnalgesic:true, isNarcotic:true }
     ];
 
-    // doses seeded relative to "now" so the demo always feels current
-    var doses = [
-      mkDose("med_loxo", daysAgo(0,3,10), "頭痛", [
-        mkCheckin("onset", 35, {effectLevel:2}),
-        mkCheckin("final", 130, {effectLevel:2, symptomChange:"improved", rating:4, nrs:2, note:"午後には楽になった。眠気は特になし。"})
-      ], {nrsBefore:6}),
-      mkDose("med_depas", daysAgo(1,21,0), "不安・不眠", [
-        mkCheckin("onset", 40, {effectLevel:3}),
-        mkCheckin("side-effect", 90, {sideEffects:[{name:"眠気", severity:"mild"}]}),
-        mkCheckin("final", 480, {effectLevel:3, symptomChange:"improved", rating:5, note:"よく眠れた。翌朝の眠気はほぼなし。"})
-      ]),
-      mkDose("med_oxynorm", daysAgo(1,6,15), "突出痛", [
-        mkCheckin("final", 45, {effectLevel:3, symptomChange:"improved", rating:4, nrs:2, note:"30分ほどで痛みが落ち着いた。"})
-      ], {nrsBefore:7}),
-      mkDose("med_calo", daysAgo(2,14,20), "発熱", [
-        mkCheckin("onset", 55, {effectLevel:2}),
-        mkCheckin("final", 240, {effectLevel:1, symptomChange:"same", rating:2, nrs:4, note:"一時的に下がったがまたぶり返した。"})
-      ], {nrsBefore:5}),
-      mkDose("med_busu", daysAgo(4,9,0), "腹痛", [
-        mkCheckin("onset", 25, {effectLevel:3}),
-        mkCheckin("no-side-effect", 60),
-        mkCheckin("final", 90, {effectLevel:3, symptomChange:"improved", rating:5, note:""})
-      ]),
-      mkDose("med_abstral", daysAgo(4,20,40), "突出痛", [
-        mkCheckin("side-effect", 20, {sideEffects:[{name:"眠気", severity:"mild"}]}),
-        mkCheckin("final", 30, {effectLevel:2, symptomChange:"improved", rating:3, nrs:4, note:"少し眠気が出たが痛みは半分程度に。"})
-      ], {nrsBefore:8}),
-      mkDose("med_loxo", daysAgo(5,19,40), "生理痛", [
-        mkCheckin("onset", 45, {effectLevel:2}),
-        mkCheckin("side-effect", 100, {sideEffects:[{name:"胃部不快感", severity:"mild"}]}),
-        mkCheckin("final", 200, {effectLevel:2, symptomChange:"improved", rating:3, note:"胃が少しムカムカした。食後に飲んだ方がよさそう。"})
-      ]),
-      mkDose("med_depas", daysAgo(7,22,10), "不安・不眠", [
-        mkCheckin("onset", 30, {effectLevel:3}),
-        mkCheckin("final", 420, {effectLevel:3, symptomChange:"improved", rating:5, note:""})
-      ]),
-      mkDose("med_oxynorm", daysAgo(7,11,0), "突出痛", [
-        mkCheckin("final", 40, {effectLevel:1, symptomChange:"same", rating:2, nrs:6, note:"あまり下がらず、主治医に相談予定。"})
-      ], {nrsBefore:8}),
-      mkDose("med_calo", daysAgo(8,16,0), "頭痛", [
-        mkCheckin("onset", 60, {effectLevel:1}),
-        mkCheckin("final", 180, {effectLevel:1, symptomChange:"same", rating:2, note:"あまり効いた感じがしなかった。"})
-      ]),
-      mkDose("med_loxo", daysAgo(10,8,30), "関節痛", [
-        mkCheckin("onset", 40, {effectLevel:2}),
-        mkCheckin("final", 150, {effectLevel:2, symptomChange:"improved", rating:4, note:""})
-      ])
-    ];
-
-    return { meds: meds, doses: doses };
+    return { meds: meds, doses: [] };
   }
 
   function mkCheckin(type, elapsedMin, extra){
     var c = { id: uid("chk"), type:type, elapsedMin: elapsedMin, at: null };
     return Object.assign(c, extra || {});
   }
-  function mkDose(medId, takenAtIso, trigger, checkins, extra){
-    checkins.forEach(function(c){ c.at = new Date(new Date(takenAtIso).getTime() + c.elapsedMin*60000).toISOString(); });
-    var completed = checkins.some(function(c){ return c.type === "final"; });
-    var dose = {
-      id: uid("dose"), medId: medId, takenAt: takenAtIso, trigger: trigger,
-      note:"", checkins: checkins, status: completed ? "completed" : "monitoring",
-      nrsBefore: null
-    };
-    return Object.assign(dose, extra || {});
-  }
-
   var state = loadState();
   function loadState(){
     try{
@@ -661,8 +599,7 @@
   function resetPendingForm(){
     var d = new Date(); d.setSeconds(0,0);
     var localIso = new Date(d.getTime() - d.getTimezoneOffset()*60000).toISOString().slice(0,16);
-    pendingForm = { medId: state.meds[0] ? state.meds[0].id : "", takenAt: localIso, trigger:"", triggerOther:"", amount:"", note:"", nrsBefore: null };
-    if(pendingForm.medId){ var m = medById(pendingForm.medId); pendingForm.amount = m.dose+m.unit; }
+    pendingForm = { medId: "", takenAt: localIso, trigger:"", triggerOther:"", amount:"", note:"", nrsBefore: null };
   }
 
   function renderLogView(){
@@ -1115,6 +1052,7 @@
       });
     });
     document.getElementById("lf-submit").addEventListener("click", function(){
+      if(!pendingForm.medId){ toast("薬剤を選択してください", true); return; }
       if(!pendingForm.trigger){ toast("きっかけ・症状を選んでください", true); return; }
       var currentMed = medById(pendingForm.medId);
       var isAnalgesic = !!(currentMed && currentMed.isAnalgesic);
