@@ -131,6 +131,7 @@
   [hidden]{ display:none !important; }
   html,body{ margin:0; padding:0; }
   body{
+    overflow-x: hidden;
     background: var(--bg);
     color: var(--ink);
     font-family: var(--font-body);
@@ -155,6 +156,7 @@
     min-height:100vh;
     background: var(--bg-plane);
   }
+  .app-shell > *{ min-width:0; }
   @media (max-width: 860px){
     .app-shell{ grid-template-columns: 1fr; }
   }
@@ -215,6 +217,14 @@
   /* ---- main ---- */
   .main{ padding: 28px 32px 60px; max-width:1180px; width:100%; }
   @media (max-width:640px){ .main{ padding: 18px 14px 50px; } }
+
+  .grid-2{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .grid-4{ display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+  .grid-11-1{ display:grid; grid-template-columns:1.1fr 1fr; gap:16px; align-items:start; }
+  @media (max-width:640px){
+    .grid-2, .grid-11-1{ grid-template-columns: 1fr; }
+    .grid-4{ grid-template-columns: repeat(2,1fr); }
+  }
 
   .view-head{ margin-bottom:22px; }
   .view-eyebrow{ font-size:12px; color:var(--accent); font-weight:700; letter-spacing:0.06em; margin-bottom:4px; }
@@ -907,7 +917,7 @@
     var selectedMed = medById(pendingForm.medId);
 
     var html = '<div class="section-title">頓服を記録する</div><div class="section-sub" style="margin-bottom:16px;">服用したらすぐ記録しましょう。あとから経過観察カードで効果や副作用を追記できます。</div>';
-    html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">';
+    html += '<div class="grid-2">';
 
     html += '<div class="field"><label for="lf-med-search">薬剤</label>';
     html += '  <div class="combobox">';
@@ -1247,14 +1257,14 @@
     html += '  <div class="section-sub" style="max-width:260px;">自己申告に基づく記録です。診察・服薬指導の参考としてご活用ください。</div>';
     html += '</div>';
 
-    html += '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px;">';
+    html += '<div class="grid-4" style="margin-bottom:18px;">';
     html += statTile("総服用回数", totalCount+" 回", "accent");
     html += statTile("平均効果発現時間", avgOnset!==null ? fmtElapsed(avgOnset) : "—", "warm");
     html += statTile("症状改善率", improveRate!==null ? improveRate+"%" : "—", "good");
     html += statTile("副作用報告率", seRate+"%", seRate>25?"warning":"neutral");
     html += '</div>';
 
-    html += '<div style="display:grid;grid-template-columns:1.1fr 1fr;gap:16px;align-items:start;">';
+    html += '<div class="grid-11-1">';
     html += '<div class="card card-pad">'+renderOnsetChart(doses)+'</div>';
     html += '<div class="card card-pad">'+renderSideEffectChart(doses)+'</div>';
     html += '</div>';
@@ -1450,7 +1460,7 @@
 
     html += '<div class="card card-pad">';
     html += '<div class="section-title">新しい頓服薬を登録</div>';
-    html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px;">';
+    html += '<div class="grid-2" style="margin-top:14px;">';
     html += '<div class="field" style="grid-column:1/-1;"><label>薬剤名</label><input class="input" id="nm-name" placeholder="例：ロキソニン錠60mg"></div>';
     html += '<div class="field"><label>1回量</label><input class="input" id="nm-dose" placeholder="1"></div>';
     html += '<div class="field"><label>単位</label><input class="input" id="nm-unit" placeholder="錠"></div>';
