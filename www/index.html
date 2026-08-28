@@ -1,0 +1,1566 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="頓服薬の服用記録・効果評価アプリ">
+<title>TONPUKU+</title>
+
+<link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="favicon-16.png" sizes="16x16" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#3FA9E0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="TONPUKU+">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="TONPUKU+">
+<meta property="og:title" content="TONPUKU+ | 頓服の記録と評価">
+<meta property="og:description" content="頓服薬の服用記録・効果評価をかんたんに。服用履歴の確認や、診察時にそのまま見せられる医療者向けサマリーも作成できます。">
+<meta property="og:url" content="https://kohei0806.github.io/tonpuku-plus/">
+<meta property="og:image" content="https://kohei0806.github.io/tonpuku-plus/ogp.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="TONPUKU+ | 頓服の記録と評価">
+<meta name="twitter:description" content="頓服薬の服用記録・効果評価をかんたんに。">
+<meta name="twitter:image" content="https://kohei0806.github.io/tonpuku-plus/ogp.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  /* ============ TOKENS ============ */
+  :root{
+    color-scheme: light;
+    --bg: #F4F5F0;
+    --bg-plane: #EEF0E9;
+    --surface: #FFFFFF;
+    --surface-alt: #ECEEE6;
+    --border: #DBDED2;
+    --border-strong: #C6CBBB;
+    --ink: #202D28;
+    --ink-secondary: #57655D;
+    --ink-muted: #8A968D;
+    --accent: #186C99;
+    --accent-strong: #0F4E79;
+    --accent-ink: #FFFFFF;
+    --accent-soft: #DDEEFA;
+    --accent-soft-ink: #0F4E79;
+    --warm: #C96A3E;
+    --warm-strong: #A8532D;
+    --warm-soft: #F6E4D9;
+    --warm-soft-ink: #8A3F1F;
+    --good: #0ca30c;
+    --good-soft: #E2F4E0;
+    --good-soft-ink: #157A17;
+    --warning: #fab219;
+    --warning-soft: #FDF0D8;
+    --warning-soft-ink: #8A5A00;
+    --serious: #ec835a;
+    --serious-soft: #FBE6DC;
+    --serious-soft-ink: #A1451F;
+    --critical: #d03b3b;
+    --critical-soft: #FBE1E1;
+    --critical-soft-ink: #A32323;
+    --shadow: 0 1px 2px rgba(32,45,40,0.06), 0 6px 20px -8px rgba(32,45,40,0.12);
+    --shadow-lg: 0 10px 40px -12px rgba(32,45,40,0.28);
+    --radius: 14px;
+    --radius-sm: 9px;
+    --font-display: "Zen Maru Gothic", "Hiragino Maru Gothic ProN", "Yu Gothic", sans-serif;
+    --font-body: "Zen Kaku Gothic New", "Hiragino Kaku Gothic ProN", "Yu Gothic Medium", sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      color-scheme: dark;
+      --bg: #10201A;
+      --bg-plane: #0B1814;
+      --surface: #16261F;
+      --surface-alt: #1C2E26;
+      --border: #294137;
+      --border-strong: #3A5548;
+      --ink: #E9F0EA;
+      --ink-secondary: #A9BCB1;
+      --ink-muted: #75897E;
+      --accent: #6EC3EA;
+      --accent-strong: #8FD5F0;
+      --accent-ink: #04262C;
+      --accent-soft: #123247;
+      --accent-soft-ink: #9FD9F2;
+      --warm: #E2915F;
+      --warm-strong: #F0AD82;
+      --warm-soft: #3B2A1F;
+      --warm-soft-ink: #F0B98C;
+      --good: #4FCB50;
+      --good-soft: #16341A;
+      --good-soft-ink: #86E087;
+      --warning: #FFCB57;
+      --warning-soft: #3A2E10;
+      --warning-soft-ink: #FFCB57;
+      --serious: #F2A283;
+      --serious-soft: #3A2417;
+      --serious-soft-ink: #F2A283;
+      --critical: #F27575;
+      --critical-soft: #3A1616;
+      --critical-soft-ink: #F79999;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 26px -10px rgba(0,0,0,0.55);
+      --shadow-lg: 0 16px 50px -14px rgba(0,0,0,0.65);
+    }
+  }
+  :root[data-theme="dark"]{
+    color-scheme: dark;
+    --bg: #10201A;
+    --bg-plane: #0B1814;
+    --surface: #16261F;
+    --surface-alt: #1C2E26;
+    --border: #294137;
+    --border-strong: #3A5548;
+    --ink: #E9F0EA;
+    --ink-secondary: #A9BCB1;
+    --ink-muted: #75897E;
+    --accent: #6EC3EA;
+    --accent-strong: #8FD5F0;
+    --accent-ink: #04262C;
+    --accent-soft: #123247;
+    --accent-soft-ink: #9FD9F2;
+    --warm: #E2915F;
+    --warm-strong: #F0AD82;
+    --warm-soft: #3B2A1F;
+    --warm-soft-ink: #F0B98C;
+    --good: #4FCB50;
+    --good-soft: #16341A;
+    --good-soft-ink: #86E087;
+    --warning: #FFCB57;
+    --warning-soft: #3A2E10;
+    --warning-soft-ink: #FFCB57;
+    --serious: #F2A283;
+    --serious-soft: #3A2417;
+    --serious-soft-ink: #F2A283;
+    --critical: #F27575;
+    --critical-soft: #3A1616;
+    --critical-soft-ink: #F79999;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 26px -10px rgba(0,0,0,0.55);
+    --shadow-lg: 0 16px 50px -14px rgba(0,0,0,0.65);
+  }
+
+  *,*::before,*::after{ box-sizing:border-box; }
+  /* Author rules that set `display` (e.g. .badge, .field) otherwise win over the UA [hidden]
+     rule regardless of specificity, since author styles beat user-agent styles by origin. This
+     keeps `hidden` authoritative everywhere it's used to toggle visibility from JS. */
+  [hidden]{ display:none !important; }
+  html,body{ margin:0; padding:0; }
+  body{
+    overflow-x: hidden;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+  h1,h2,h3,h4{ font-family: var(--font-display); font-weight:700; margin:0; text-wrap:balance; color:var(--ink); }
+  p{ margin:0; }
+  button{ font-family:inherit; }
+  input,select,textarea{ font-family:inherit; font-size:inherit; color:inherit; }
+  .num{ font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+  /* ============ SHELL ============ */
+  .app-shell{
+    display:grid;
+    grid-template-columns: 236px 1fr;
+    min-height:100vh;
+    background: var(--bg-plane);
+  }
+  .app-shell > *{ min-width:0; }
+  @media (max-width: 860px){
+    .app-shell{ grid-template-columns: 1fr; }
+  }
+
+  /* ---- sidebar ---- */
+  .sidebar{
+    background: var(--surface);
+    border-right:1px solid var(--border);
+    padding: 22px 16px;
+    display:flex;
+    flex-direction:column;
+    gap: 26px;
+    position:sticky;
+    top:0;
+    height:100vh;
+  }
+  @media (max-width: 860px){
+    .sidebar{ position:static; height:auto; border-right:none; border-bottom:1px solid var(--border); padding:16px; }
+  }
+  .brand{ display:flex; align-items:center; gap:10px; padding:0 6px; }
+  .brand-mark{
+    width:38px; height:38px; border-radius:11px;
+    background: linear-gradient(165deg, #6EC3EA, #2E98CC);
+    display:flex; align-items:center; justify-content:center;
+    color: #FFFFFF; font-family:var(--font-display); font-weight:900; font-size:17px;
+    box-shadow: var(--shadow);
+    flex-shrink:0;
+  }
+  .brand-text{ display:flex; flex-direction:column; line-height:1.2; }
+  .brand-name{ font-family:var(--font-display); font-weight:900; font-size:18.5px; letter-spacing:0.01em; }
+  .brand-name em{ font-style:normal; color:var(--accent); }
+  .brand-tag{ font-size:11px; color:var(--ink-muted); margin-top:2px; }
+
+  .nav{ display:flex; flex-direction:column; gap:4px; }
+  @media (max-width: 860px){ .nav{ flex-direction:row; overflow-x:auto; gap:8px; padding-bottom:2px; } }
+  .nav-item{
+    display:flex; align-items:center; gap:10px;
+    padding:10px 12px; border-radius:10px;
+    color: var(--ink-secondary); text-decoration:none;
+    font-size:14px; font-weight:500;
+    border:1px solid transparent;
+    cursor:pointer; background:none; text-align:left; width:100%;
+    white-space:nowrap;
+  }
+  .nav-item:hover{ background: var(--surface-alt); color:var(--ink); }
+  .nav-item.active{ background: var(--accent-soft); color: var(--accent-soft-ink); font-weight:700; }
+  .nav-item .ico{ width:18px; text-align:center; flex-shrink:0; }
+  .nav-badge{
+    margin-left:auto; font-family:var(--font-mono); font-size:11px;
+    background: var(--warm); color:#fff; border-radius:20px; padding:1px 7px;
+    min-width:18px; text-align:center;
+  }
+  @media (max-width:860px){ .nav-badge{ margin-left:4px; } }
+
+  .sidebar-foot{ margin-top:auto; font-size:11px; color:var(--ink-muted); padding:0 6px; line-height:1.6; }
+  @media (max-width: 860px){ .sidebar-foot{ display:none; } }
+
+  /* ---- main ---- */
+  .main{ padding: 28px 32px 60px; max-width:1180px; width:100%; }
+  @media (max-width:640px){ .main{ padding: 18px 14px 50px; } }
+
+  .grid-2{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .grid-4{ display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+  .grid-11-1{ display:grid; grid-template-columns:1.1fr 1fr; gap:16px; align-items:start; }
+  @media (max-width:640px){
+    .grid-2, .grid-11-1{ grid-template-columns: 1fr; }
+    .grid-4{ grid-template-columns: repeat(2,1fr); }
+  }
+
+  .view-head{ margin-bottom:22px; }
+  .view-eyebrow{ font-size:12px; color:var(--accent); font-weight:700; letter-spacing:0.06em; margin-bottom:4px; }
+  .view-title{ font-size: 24px; }
+  .view-desc{ color:var(--ink-secondary); font-size:13.5px; margin-top:6px; max-width:62ch; }
+
+  .view{ display:none; }
+  .view.active{ display:block; }
+
+  /* ============ CARDS / PRIMITIVES ============ */
+  .card{
+    background:var(--surface); border:1px solid var(--border); border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+  .card-pad{ padding:20px; }
+  .section-title{ font-size:15px; font-family:var(--font-display); font-weight:700; display:flex; align-items:center; gap:8px; }
+  .section-sub{ font-size:12.5px; color:var(--ink-muted); margin-top:2px; }
+
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:7px;
+    border-radius:10px; border:1px solid var(--border-strong);
+    background:var(--surface); color:var(--ink);
+    padding:9px 15px; font-size:13.5px; font-weight:500; cursor:pointer;
+    transition: transform .08s ease, background .12s ease, border-color .12s ease;
+  }
+  .btn:hover{ background:var(--surface-alt); }
+  .btn:active{ transform: scale(0.98); }
+  .btn:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+  .btn-primary{ background:var(--accent); border-color:var(--accent); color:var(--accent-ink); font-weight:700; }
+  .btn-primary:hover{ background:var(--accent-strong); border-color:var(--accent-strong); }
+  .btn-warm{ background:var(--warm); border-color:var(--warm); color:#fff; font-weight:700; }
+  .btn-warm:hover{ background:var(--warm-strong); border-color:var(--warm-strong); }
+  .btn-ghost{ background:transparent; border-color:transparent; color:var(--ink-secondary); }
+  .btn-ghost:hover{ background:var(--surface-alt); color:var(--ink); }
+  .btn-sm{ padding:6px 11px; font-size:12.5px; border-radius:8px; }
+  .btn-danger-outline{ border-color:var(--critical); color:var(--critical); background:transparent; }
+  .btn-danger-outline:hover{ background:var(--critical-soft); }
+  .btn[disabled]{ opacity:0.45; cursor:not-allowed; }
+  .btn-block{ width:100%; }
+
+  .chip{
+    display:inline-flex; align-items:center; gap:5px; padding:6px 12px; border-radius:999px;
+    border:1px solid var(--border-strong); background:var(--surface); color:var(--ink-secondary);
+    font-size:12.5px; cursor:pointer; font-weight:500;
+  }
+  .chip:hover{ background:var(--surface-alt); }
+  .chip.selected{ background:var(--accent); border-color:var(--accent); color:var(--accent-ink); font-weight:700; }
+  .chip-dashed{ border-style:dashed; color:var(--ink-muted); }
+  .chip-dashed.selected{ background:var(--good); border-color:var(--good); border-style:solid; color:#fff; }
+
+  .field{ display:flex; flex-direction:column; gap:6px; }
+  .field label{ font-size:12.5px; font-weight:700; color:var(--ink-secondary); }
+  .field .hint{ font-size:11.5px; color:var(--ink-muted); font-weight:400; }
+
+  .combobox{ position:relative; }
+  .combobox-input{ padding-right:32px; background-image: none; }
+  .combobox-input:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; }
+  .combobox-ico{
+    position:absolute; right:11px; top:50%; transform:translateY(-50%);
+    font-size:13px; color:var(--ink-muted); pointer-events:none;
+  }
+  .combobox-panel{
+    position:absolute; top:calc(100% + 6px); left:0; right:0; z-index:20;
+    background:var(--surface); border:1px solid var(--border-strong); border-radius:10px;
+    box-shadow: var(--shadow-lg); max-height:264px; overflow-y:auto; padding:6px;
+  }
+  .combobox-item{
+    display:flex; flex-direction:column; gap:1px; padding:8px 10px; border-radius:8px; cursor:pointer;
+  }
+  .combobox-item:hover, .combobox-item.active{ background:var(--accent-soft); }
+  .combobox-item .cbi-name{ font-size:13.5px; font-weight:600; color:var(--ink); }
+  .combobox-item.active .cbi-name{ color:var(--accent-soft-ink); }
+  .combobox-item .cbi-meta{ font-size:11.5px; color:var(--ink-muted); }
+  .combobox-item.active .cbi-meta{ color:var(--accent-soft-ink); opacity:0.85; }
+  .combobox-empty{ padding:14px 10px; text-align:center; font-size:12.5px; color:var(--ink-muted); }
+  .combobox-empty .btn{ margin-top:8px; }
+  .input, select.input, textarea.input{
+    border:1px solid var(--border-strong); border-radius:9px; background:var(--surface);
+    padding:9px 11px; font-size:14px; color:var(--ink); width:100%;
+  }
+  .input:focus-visible, select.input:focus-visible, textarea.input:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; }
+  textarea.input{ resize:vertical; min-height:56px; }
+
+  .badge{
+    display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:999px;
+    font-size:11.5px; font-weight:700; white-space:nowrap;
+  }
+  .badge-good{ background:var(--good-soft); color:var(--good-soft-ink); }
+  .badge-warning{ background:var(--warning-soft); color:var(--warning-soft-ink); }
+  .badge-serious{ background:var(--serious-soft); color:var(--serious-soft-ink); }
+  .badge-critical{ background:var(--critical-soft); color:var(--critical-soft-ink); }
+  .badge-accent{ background:var(--accent-soft); color:var(--accent-soft-ink); }
+  .badge-warm{ background:var(--warm-soft); color:var(--warm-soft-ink); }
+  .badge-neutral{ background:var(--surface-alt); color:var(--ink-secondary); }
+  .dot{ width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+  .dot-good{ background:var(--good); } .dot-warning{ background:var(--warning); }
+  .dot-serious{ background:var(--serious); } .dot-critical{ background:var(--critical); }
+  .dot-accent{ background:var(--accent); } .dot-warm{ background:var(--warm); }
+
+  .empty{ text-align:center; padding:36px 20px; color:var(--ink-muted); font-size:13.5px; }
+  .empty .ico{ font-size:26px; margin-bottom:8px; display:block; }
+
+  ::selection{ background: var(--accent-soft); color:var(--accent-soft-ink); }
+  a{ color: var(--accent); }
+  .visually-hidden{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); }
+</style>
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 36 36" width="24" height="24" focusable="false">
+          <defs>
+            <mask id="tp-piglet-butt-mask" maskUnits="userSpaceOnUse">
+              <rect x="0" y="0" width="36" height="36" fill="#000"/>
+              <path d="M9.2 15.6C6.4 13.6 4.3 8.9 6 5.4C9.2 6 13 9 14.3 12.3C15 14 13.4 15.2 11.6 15.9C10.8 16.2 9.9 16.1 9.2 15.6Z" fill="#fff" transform="translate(9.2 15.6) scale(0.72) translate(-9.2 -15.6)"/>
+              <path d="M26.8 15.6C29.6 13.6 31.7 8.9 30 5.4C26.8 6 23 9 21.7 12.3C21 14 22.6 15.2 24.4 15.9C25.2 16.2 26.1 16.1 26.8 15.6Z" fill="#fff" transform="translate(26.8 15.6) scale(0.72) translate(-26.8 -15.6)"/>
+              <ellipse cx="18" cy="20.2" rx="11" ry="10.6" fill="#fff"/>
+              <ellipse cx="14.7" cy="30.1" rx="2.5" ry="2" fill="#fff"/>
+              <ellipse cx="21.3" cy="30.1" rx="2.5" ry="2" fill="#fff"/>
+              <path d="M14.7 30.9 L14.7 31.7" fill="none" stroke="#000" stroke-width="0.5" stroke-linecap="round"/>
+              <path d="M21.3 30.9 L21.3 31.7" fill="none" stroke="#000" stroke-width="0.5" stroke-linecap="round"/>
+              <path d="M18.4 12.4 C21.6 12.6 22.8 15.6 20.9 17.7 C19.3 19.5 16.5 18.7 16.4 16.6 C16.3 15 17.9 14.2 18.8 15.3" fill="none" stroke="#000" stroke-width="1.9" stroke-linecap="round"/>
+            </mask>
+          </defs>
+          <rect x="0" y="0" width="36" height="36" fill="currentColor" mask="url(#tp-piglet-butt-mask)"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <div class="brand-name">TONPUKU<em>+</em></div>
+        <div class="brand-tag">頓服の記録と評価</div>
+      </div>
+    </div>
+    <nav class="nav" id="nav" role="tablist" aria-label="画面切り替え"></nav>
+    <div class="sidebar-foot">
+      本アプリはプロトタイプです。<br>
+      記録はこのブラウザ内にのみ保存され、<br>実際の医療判断には使用しないでください。
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="view active" id="view-log">
+      <div class="view-head">
+        <div class="view-eyebrow">LOG A DOSE</div>
+        <h1 class="view-title">頓服を記録する</h1>
+        <p class="view-desc">飲んだ薬・時刻をすぐ記録し、そのあとの効果や副作用を経過観察カードで追記していきます。</p>
+      </div>
+      <div id="monitoring-zone"></div>
+      <div class="card card-pad" id="log-form-card" style="margin-top:18px;"></div>
+    </div>
+
+    <div class="view" id="view-history">
+      <div class="view-head">
+        <div class="view-eyebrow">HISTORY</div>
+        <h1 class="view-title">服用履歴</h1>
+        <p class="view-desc">これまでの頓服の記録を時系列で確認できます。効果が出るまでの時間や副作用もひと目で分かります。</p>
+      </div>
+      <div id="history-filters" style="margin-bottom:16px;"></div>
+      <div id="history-list"></div>
+    </div>
+
+    <div class="view" id="view-summary">
+      <div class="view-head">
+        <div class="view-eyebrow">FOR CLINICIANS</div>
+        <h1 class="view-title">医療者向けサマリー</h1>
+        <p class="view-desc">診察や薬局での相談時に、そのまま画面を見せて共有できるレポートです。</p>
+      </div>
+      <div id="summary-content"></div>
+    </div>
+
+    <div class="view" id="view-meds">
+      <div class="view-head">
+        <div class="view-eyebrow">MEDICATIONS</div>
+        <h1 class="view-title">頓服薬の管理</h1>
+        <p class="view-desc">処方されている頓服薬を登録しておくと、記録がすばやく行えます。</p>
+      </div>
+      <div id="meds-content"></div>
+    </div>
+  </main>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ============ CONSTANTS ============ */
+  var TRIGGERS = ["頭痛","生理痛","発熱","腹痛","不安・不眠","歯痛・関節痛","突出痛","その他"];
+  var SIDE_EFFECTS = ["眠気","吐き気","めまい","胃部不快感","便秘","発疹・かゆみ","動悸","口の渇き","呼吸抑制","その他"];
+  var NRS_SCALE = [0,1,2,3,4,5,6,7,8,9,10];
+  var AMOUNT_OPTIONS = [0.5,1,1.5,2,2.5,3,4];
+  var SEVERITIES = [
+    {v:"mild", label:"軽度", cls:"warning"},
+    {v:"moderate", label:"中等度", cls:"serious"},
+    {v:"severe", label:"重度", cls:"critical"}
+  ];
+  var SEVERITY_NONE = {v:"none", label:"なし", cls:"good"};
+  var EFFECT_LEVELS = [
+    {v:3, label:"よく効いた", ico:"◎"},
+    {v:2, label:"少し効いた", ico:"○"},
+    {v:1, label:"あまり効かなかった", ico:"△"},
+    {v:0, label:"効果なし", ico:"×"}
+  ];
+  var STORE_KEY = "tonpuku-plus-v1";
+
+  /* ============ SEED / STATE ============ */
+  function uid(prefix){ return prefix + "_" + Math.random().toString(36).slice(2,9); }
+  function minutesAgo(m){ return new Date(Date.now() - m*60000).toISOString(); }
+
+  function seedData(){
+    var meds = [
+      { id:"med_loxo", name:"ロキソニン錠60mg", dose:"1", unit:"錠", indication:"頭痛・生理痛", prescriber:"田中内科クリニック（田中医師）", maxPerDay:3, isAnalgesic:true, isNarcotic:false },
+      { id:"med_calo", name:"カロナール錠200mg", dose:"2", unit:"錠", indication:"発熱・痛み全般", prescriber:"田中内科クリニック（田中医師）", maxPerDay:4, isAnalgesic:true, isNarcotic:false },
+      { id:"med_busu", name:"ブスコパン糖衣錠", dose:"1", unit:"錠", indication:"腹痛・胃けいれん", prescriber:"田中内科クリニック（田中医師）", maxPerDay:3, isAnalgesic:true, isNarcotic:false },
+      { id:"med_depas", name:"デパス錠0.5mg", dose:"0.5", unit:"錠", indication:"不安時・不眠時", prescriber:"さくら心療内科", maxPerDay:2, isAnalgesic:false, isNarcotic:false },
+      { id:"med_oxynorm", name:"オキノーム散2.5mg", dose:"1", unit:"包", indication:"突出痛（がん性疼痛のレスキュー）", prescriber:"緩和ケア科（佐藤医師）", maxPerDay:6, isAnalgesic:true, isNarcotic:true },
+      { id:"med_abstral", name:"アブストラル舌下錠100μg", dose:"1", unit:"錠", indication:"突出痛（がん性疼痛のレスキュー）", prescriber:"緩和ケア科（佐藤医師）", maxPerDay:4, isAnalgesic:true, isNarcotic:true }
+    ];
+
+    return { meds: meds, doses: [] };
+  }
+
+  function mkCheckin(type, elapsedMin, extra){
+    var c = { id: uid("chk"), type:type, elapsedMin: elapsedMin, at: null };
+    return Object.assign(c, extra || {});
+  }
+  var state = loadState();
+  function loadState(){
+    try{
+      var raw = localStorage.getItem(STORE_KEY);
+      if(raw){
+        var parsed = JSON.parse(raw);
+        if(parsed && parsed.meds && parsed.doses) return parsed;
+      }
+    }catch(e){ /* storage unavailable — fall back to seed, in-memory only */ }
+    return seedData();
+  }
+  function saveState(){
+    try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }catch(e){ /* ignore quota / privacy-mode errors */ }
+  }
+
+  function medById(id){ return state.meds.find(function(m){ return m.id===id; }); }
+  function doseById(id){ return state.doses.find(function(d){ return d.id===id; }); }
+
+  /* ============ TIME HELPERS ============ */
+  function fmtClock(iso){
+    var d = new Date(iso);
+    return d.toLocaleString("ja-JP", {month:"numeric", day:"numeric", hour:"2-digit", minute:"2-digit"});
+  }
+  function fmtTimeOnly(iso){
+    var d = new Date(iso);
+    return d.toLocaleTimeString("ja-JP", {hour:"2-digit", minute:"2-digit"});
+  }
+  function fmtDayLabel(iso){
+    var d = new Date(iso);
+    var today = new Date(); today.setHours(0,0,0,0);
+    var that = new Date(d); that.setHours(0,0,0,0);
+    var diffDays = Math.round((today-that)/86400000);
+    var wd = ["日","月","火","水","木","金","土"][d.getDay()];
+    var base = (d.getMonth()+1)+"月"+d.getDate()+"日（"+wd+"）";
+    if(diffDays===0) return "今日・"+base;
+    if(diffDays===1) return "昨日・"+base;
+    return base;
+  }
+  function fmtElapsed(min){
+    min = Math.max(0, Math.round(min));
+    if(min < 60) return min+"分";
+    var h = Math.floor(min/60), m = min%60;
+    return h+"時間"+(m? m+"分":"");
+  }
+  function elapsedSinceTaken(dose){
+    return (Date.now() - new Date(dose.takenAt).getTime())/60000;
+  }
+  function onsetMinutes(dose){
+    var onset = dose.checkins.find(function(c){ return c.type==="onset"; });
+    return onset ? onset.elapsedMin : null;
+  }
+  function finalCheckin(dose){
+    return dose.checkins.find(function(c){ return c.type==="final"; }) || null;
+  }
+  function isNarcoticDose(dose){
+    var m = medById(dose.medId);
+    return !!(m && m.isNarcotic);
+  }
+  function isAnalgesicDose(dose){
+    var m = medById(dose.medId);
+    return !!(m && m.isAnalgesic);
+  }
+  function nrsAfterValue(dose){
+    var fin = finalCheckin(dose);
+    return (fin && fin.nrs!=null) ? fin.nrs : null;
+  }
+  function allSideEffects(dose){
+    var out = [];
+    dose.checkins.forEach(function(c){ if(c.sideEffects) out = out.concat(c.sideEffects); });
+    return out;
+  }
+  function hasNoSideEffectCheckin(dose){
+    return dose.checkins.some(function(c){ return c.type==="no-side-effect"; });
+  }
+  function worstSeverity(effects){
+    var order = {mild:1, moderate:2, severe:3};
+    var worst = null;
+    effects.forEach(function(e){ if(!worst || order[e.severity] > order[worst]) worst = e.severity; });
+    return worst;
+  }
+  function severityMeta(sev){
+    return SEVERITIES.find(function(s){ return s.v===sev; }) || SEVERITIES[0];
+  }
+
+  /* ============ NAV ============ */
+  var VIEWS = [
+    {id:"log", label:"記録する", ico:"✎"},
+    {id:"history", label:"履歴", ico:"☰"},
+    {id:"summary", label:"サマリー（医療者向け）", ico:"◫"},
+    {id:"meds", label:"頓服薬の管理", ico:'<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;"><path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/><path d="m8.5 8.5 7 7"/></svg>'}
+  ];
+  var activeView = "log";
+
+  function renderNav(){
+    var nav = document.getElementById("nav");
+    nav.innerHTML = "";
+    VIEWS.forEach(function(v){
+      var btn = document.createElement("button");
+      btn.className = "nav-item" + (v.id===activeView ? " active":"");
+      btn.setAttribute("role","tab");
+      btn.setAttribute("aria-selected", v.id===activeView ? "true":"false");
+      var monitoringCount = state.doses.filter(function(d){ return d.status==="monitoring"; }).length;
+      btn.innerHTML = '<span class="ico" aria-hidden="true">'+v.ico+'</span><span>'+v.label+'</span>' +
+        (v.id==="log" && monitoringCount>0 ? '<span class="nav-badge">'+monitoringCount+'</span>' : "");
+      btn.addEventListener("click", function(){ setView(v.id); });
+      nav.appendChild(btn);
+    });
+  }
+  function setView(id){
+    activeView = id;
+    document.querySelectorAll(".view").forEach(function(v){ v.classList.remove("active"); });
+    document.getElementById("view-"+id).classList.add("active");
+    renderNav();
+    if(id==="log") renderLogView();
+    if(id==="history") renderHistoryView();
+    if(id==="summary") renderSummaryView();
+    if(id==="meds") renderMedsView();
+  }
+
+  /* ============ LOG VIEW ============ */
+  var pendingForm = { medId: "", takenAt: "", trigger: "", triggerOther:"", amount:"", note:"", nrsBefore: null };
+
+  function resetPendingForm(){
+    var d = new Date(); d.setSeconds(0,0);
+    var localIso = new Date(d.getTime() - d.getTimezoneOffset()*60000).toISOString().slice(0,16);
+    pendingForm = { medId: "", takenAt: localIso, trigger:"", triggerOther:"", amount:"", note:"", nrsBefore: null };
+  }
+
+  function renderLogView(){
+    renderMonitoringZone();
+    renderLogForm();
+  }
+
+  function renderMonitoringZone(){
+    var zone = document.getElementById("monitoring-zone");
+    var active = state.doses.filter(function(d){ return d.status==="monitoring"; })
+      .sort(function(a,b){ return new Date(b.takenAt)-new Date(a.takenAt); });
+    if(active.length===0){ zone.innerHTML = ""; return; }
+
+    var html = '<div class="section-title" style="margin-bottom:10px;"><span class="dot dot-warm"></span>経過観察中 <span style="font-weight:400;color:var(--ink-muted);font-size:12.5px;">（'+active.length+'件）</span></div>';
+    html += '<div style="display:flex;flex-direction:column;gap:12px;margin-bottom:22px;">';
+    active.forEach(function(dose){ html += renderMonitorCard(dose); });
+    html += '</div>';
+    zone.innerHTML = html;
+    wireMonitorCards();
+  }
+
+  function renderMonitorCard(dose){
+    var med = medById(dose.medId);
+    var elapsed = elapsedSinceTaken(dose);
+    var onset = onsetMinutes(dose);
+    var effects = allSideEffects(dose);
+    var expanded = expandedMonitorId === dose.id;
+    var name = med ? med.name : "（不明な薬）";
+
+    var chips = '<div class="badge badge-warm"><span class="dot dot-warm"></span>経過 <span class="num">'+fmtElapsed(elapsed)+'</span></div>';
+    if(dose.nrsBefore!=null) chips += ' <div class="badge badge-accent">使用前 NRS <span class="num">'+dose.nrsBefore+'</span></div>';
+    if(onset!==null) chips += ' <div class="badge badge-good">効果発現まで <span class="num">'+fmtElapsed(onset)+'</span></div>';
+    if(effects.length) chips += ' <div class="badge badge-'+severityMeta(worstSeverity(effects)).cls+'">副作用 '+effects.length+'件</div>';
+    else if(hasNoSideEffectCheckin(dose)) chips += ' <div class="badge badge-good">副作用なし確認済み</div>';
+
+    var body = '';
+    body += '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;">';
+    body += '  <div>';
+    body += '    <div style="font-weight:700;font-size:15.5px;">'+esc(name)+' <span style="font-weight:400;color:var(--ink-muted);font-size:12.5px;">'+esc(med?med.dose+med.unit:"")+'</span></div>';
+    body += '    <div style="font-size:12.5px;color:var(--ink-secondary);margin-top:2px;">'+esc(dose.trigger||"")+'・服用 '+fmtTimeOnly(dose.takenAt)+'</div>';
+    body += '  </div>';
+    body += '  <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;">'+chips+'</div>';
+    body += '</div>';
+
+    body += '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;">';
+    body += '  <button class="btn btn-sm" data-action="toggle-expand" data-id="'+dose.id+'">'+(expanded?"閉じる":"経過を記録する")+'</button>';
+    body += '  <button class="btn btn-sm btn-primary" data-action="complete" data-id="'+dose.id+'">評価を完了する</button>';
+    body += '</div>';
+
+    if(expanded){
+      body += renderCheckinPanel(dose);
+    }
+
+    return '<div class="card card-pad" style="border-left:3px solid var(--warm);">'+body+'</div>';
+  }
+
+  var expandedMonitorId = null;
+
+  function renderCheckinPanel(dose){
+    var sel = seSelection[dose.id] || { items:new Set(), severity:"mild" };
+    var html = '<div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:14px;">';
+
+    if(isAnalgesicDose(dose)){
+      html += '<div class="section-sub" style="background:var(--accent-soft);color:var(--accent-soft-ink);padding:8px 10px;border-radius:8px;">' +
+        '鎮痛薬として登録されています。使用後のNRS（痛みの強さ）は「評価を完了する」から記録できます。</div>';
+    }
+
+    html += '<div class="field"><label>効果を感じ始めた場合、どのくらいでしたか？</label><div style="display:flex;gap:8px;flex-wrap:wrap;">';
+    EFFECT_LEVELS.forEach(function(lvl){
+      html += '<button class="chip" data-action="log-onset" data-id="'+dose.id+'" data-level="'+lvl.v+'">'+lvl.ico+' '+lvl.label+'</button>';
+    });
+    html += '</div></div>';
+
+    html += '<div class="field"><label>副作用を記録する</label><div style="display:flex;flex-direction:column;gap:8px;">';
+    html += '<div style="display:flex;gap:6px;flex-wrap:wrap;" id="se-chip-row-'+dose.id+'">';
+    SIDE_EFFECTS.forEach(function(se){
+      html += '<button class="chip'+(sel.items.has(se)?" selected":"")+'" data-action="toggle-se" data-id="'+dose.id+'" data-se="'+esc(se)+'">'+esc(se)+'</button>';
+    });
+    html += '<button class="chip chip-dashed'+(sel.severity==="none"?" selected":"")+'" data-action="pick-severity" data-id="'+dose.id+'" data-sev="none">'+SEVERITY_NONE.label+'</button>';
+    html += '</div>';
+    html += '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">';
+    html += '<span class="section-sub" style="margin:0;">重症度：</span>';
+    SEVERITIES.forEach(function(s){
+      html += '<button class="chip'+(sel.severity===s.v?" selected":"")+'" data-action="pick-severity" data-id="'+dose.id+'" data-sev="'+s.v+'">'+s.label+'</button>';
+    });
+    html += '<button class="chip chip-dashed'+(sel.severity==="none"?" selected":"")+'" data-action="pick-severity" data-id="'+dose.id+'" data-sev="none">'+SEVERITY_NONE.label+'</button>';
+    html += '<button class="btn btn-sm btn-warm" data-action="save-se" data-id="'+dose.id+'" style="margin-left:auto;">副作用を記録</button>';
+    html += '</div></div></div>';
+
+    html += '</div>';
+    return html;
+  }
+
+  var seSelection = {}; // doseId -> {items:Set, severity} — severity "none" means "no side effects" was chosen
+
+  function wireMonitorCards(){
+    document.querySelectorAll('[data-action="toggle-expand"]').forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var id = btn.getAttribute("data-id");
+        expandedMonitorId = (expandedMonitorId===id) ? null : id;
+        if(expandedMonitorId && !seSelection[id]) seSelection[id] = { items:new Set(), severity:"mild" };
+        renderMonitoringZone();
+      });
+    });
+    document.querySelectorAll('[data-action="complete"]').forEach(function(btn){
+      btn.addEventListener("click", function(){ openCompletionFlow(btn.getAttribute("data-id")); });
+    });
+    document.querySelectorAll('[data-action="log-onset"]').forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var id = btn.getAttribute("data-id"), level = parseInt(btn.getAttribute("data-level"),10);
+        var dose = doseById(id);
+        var elapsed = elapsedSinceTaken(dose);
+        dose.checkins.push(mkCheckin("onset", elapsed, {effectLevel: level, at: new Date().toISOString()}));
+        saveState();
+        renderMonitoringZone();
+        toast("効果発現の記録を保存しました（経過 "+fmtElapsed(elapsed)+"）");
+      });
+    });
+    document.querySelectorAll('[data-action="toggle-se"]').forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var id = btn.getAttribute("data-id"), se = btn.getAttribute("data-se");
+        if(!seSelection[id]) seSelection[id] = { items:new Set(), severity:"mild" };
+        var sel = seSelection[id];
+        if(sel.items.has(se)) sel.items.delete(se); else sel.items.add(se);
+        // picking an actual side effect overrides a previously-chosen "no side effects"
+        if(sel.severity==="none") sel.severity = "mild";
+        renderMonitoringZone();
+      });
+    });
+    document.querySelectorAll('[data-action="pick-severity"]').forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var id = btn.getAttribute("data-id"), sev = btn.getAttribute("data-sev");
+        if(!seSelection[id]) seSelection[id] = { items:new Set(), severity:"mild" };
+        var sel = seSelection[id];
+        sel.severity = sev;
+        // "no side effects" is mutually exclusive with any specific side effect already picked
+        if(sev==="none") sel.items.clear();
+        renderMonitoringZone();
+      });
+    });
+    document.querySelectorAll('[data-action="save-se"]').forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var id = btn.getAttribute("data-id");
+        var sel = seSelection[id] || { items:new Set(), severity:"mild" };
+        var dose = doseById(id);
+        var elapsed = elapsedSinceTaken(dose);
+        if(sel.severity==="none"){
+          dose.checkins.push(mkCheckin("no-side-effect", elapsed, {at:new Date().toISOString()}));
+          saveState();
+          seSelection[id] = { items:new Set(), severity:"mild" };
+          renderMonitoringZone();
+          toast("副作用なしを記録しました");
+          return;
+        }
+        if(sel.items.size===0){ toast("副作用の種類を選ぶか、「なし」を選択してください", true); return; }
+        var effects = Array.from(sel.items).map(function(name){ return {name:name, severity: sel.severity}; });
+        dose.checkins.push(mkCheckin("side-effect", elapsed, {sideEffects: effects, at:new Date().toISOString()}));
+        saveState();
+        seSelection[id] = { items:new Set(), severity:"mild" };
+        renderMonitoringZone();
+        toast("副作用を記録しました");
+      });
+    });
+  }
+
+  /* ---- completion flow (inline, replaces form card temporarily) ---- */
+  var completionDraft = null;
+  function openCompletionFlow(doseId){
+    completionDraft = { doseId: doseId, symptomChange:"improved", rating:4, note:"", nrsAfter: null };
+    renderLogForm();
+    var el = document.getElementById("log-form-card");
+    if(el) el.scrollIntoView({behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto":"smooth", block:"center"});
+  }
+
+  function renderCompletionForm(){
+    var dose = doseById(completionDraft.doseId);
+    var med = medById(dose.medId);
+    var elapsed = elapsedSinceTaken(dose);
+    var isAnalgesic = isAnalgesicDose(dose);
+    var html = '';
+    html += '<div class="section-title">評価を完了する</div>';
+    html += '<div class="section-sub" style="margin-bottom:16px;">'+esc(med?med.name:"")+'・服用から <span class="num">'+fmtElapsed(elapsed)+'</span> 経過</div>';
+
+    if(isAnalgesic){
+      html += '<div class="field" style="margin-bottom:14px;">';
+      html += '  <label>使用後の痛みの強さ（NRS）' + (dose.nrsBefore!=null ? '<span class="hint">使用前は NRS '+dose.nrsBefore+'</span>' : '') + '</label>';
+      html += '  <div style="display:flex;gap:6px;flex-wrap:wrap;">';
+      NRS_SCALE.forEach(function(n){
+        html += '<button class="chip'+(completionDraft.nrsAfter===n?" selected":"")+'" data-action="cf-nrs" data-v="'+n+'" style="min-width:34px;justify-content:center;">'+n+'</button>';
+      });
+      html += '  </div>';
+      html += '  <span class="hint">0：痛みなし　10：これまでで最も強い痛み</span>';
+      html += '</div>';
+    }
+
+    html += '<div class="field" style="margin-bottom:14px;"><label>症状は変化しましたか？</label><div style="display:flex;gap:8px;flex-wrap:wrap;">';
+    [["improved","改善した"],["same","変わらない"],["worse","悪化した"]].forEach(function(pair){
+      html += '<button class="chip'+(completionDraft.symptomChange===pair[0]?" selected":"")+'" data-action="cf-change" data-v="'+pair[0]+'">'+pair[1]+'</button>';
+    });
+    html += '</div></div>';
+
+    html += '<div class="field" style="margin-bottom:14px;"><label>全体評価（5段階）</label><div style="display:flex;gap:8px;flex-wrap:wrap;">';
+    for(var i=1;i<=5;i++){
+      html += '<button class="chip'+(completionDraft.rating===i?" selected":"")+'" data-action="cf-rating" data-v="'+i+'">'+"★".repeat(i)+'</button>';
+    }
+    html += '</div></div>';
+
+    html += '<div class="field" style="margin-bottom:18px;"><label>メモ（自由記述）<span class="hint">任意・医師や薬剤師への申し送りにも使えます</span></label>';
+    html += '<textarea class="input" id="cf-note" placeholder="例：飲んで1時間ほどで痛みが半分くらいになった">'+esc(completionDraft.note)+'</textarea></div>';
+
+    html += '<div style="display:flex;gap:10px;">';
+    html += '<button class="btn btn-primary" data-action="cf-save">この内容で記録を完了</button>';
+    html += '<button class="btn btn-ghost" data-action="cf-cancel">キャンセル</button>';
+    html += '</div>';
+    return html;
+  }
+
+  function wireCompletionForm(){
+    document.querySelectorAll('[data-action="cf-change"]').forEach(function(btn){
+      btn.addEventListener("click", function(){ completionDraft.symptomChange = btn.getAttribute("data-v"); renderLogForm(); });
+    });
+    document.querySelectorAll('[data-action="cf-rating"]').forEach(function(btn){
+      btn.addEventListener("click", function(){ completionDraft.rating = parseInt(btn.getAttribute("data-v"),10); renderLogForm(); });
+    });
+    document.querySelectorAll('[data-action="cf-nrs"]').forEach(function(btn){
+      btn.addEventListener("click", function(){ completionDraft.nrsAfter = parseInt(btn.getAttribute("data-v"),10); renderLogForm(); });
+    });
+    var noteEl = document.getElementById("cf-note");
+    if(noteEl) noteEl.addEventListener("input", function(){ completionDraft.note = noteEl.value; });
+    var saveBtn = document.querySelector('[data-action="cf-save"]');
+    if(saveBtn) saveBtn.addEventListener("click", function(){
+      var dose = doseById(completionDraft.doseId);
+      if(isAnalgesicDose(dose) && completionDraft.nrsAfter===null){
+        toast("使用後のNRS（痛みの強さ）を選択してください", true);
+        return;
+      }
+      var elapsed = elapsedSinceTaken(dose);
+      dose.checkins.push(mkCheckin("final", elapsed, {
+        effectLevel: completionDraft.symptomChange==="improved" ? 3 : (completionDraft.symptomChange==="same" ? 1 : 0),
+        symptomChange: completionDraft.symptomChange,
+        rating: completionDraft.rating,
+        note: completionDraft.note,
+        nrs: completionDraft.nrsAfter,
+        at: new Date().toISOString()
+      }));
+      dose.status = "completed";
+      saveState();
+      completionDraft = null;
+      renderLogView();
+      toast("記録を完了しました。履歴からいつでも確認できます。");
+    });
+    var cancelBtn = document.querySelector('[data-action="cf-cancel"]');
+    if(cancelBtn) cancelBtn.addEventListener("click", function(){ completionDraft = null; renderLogForm(); });
+  }
+
+  function renderLogForm(){
+    var card = document.getElementById("log-form-card");
+    if(completionDraft){
+      card.innerHTML = renderCompletionForm();
+      wireCompletionForm();
+      return;
+    }
+    if(!pendingForm.medId) resetPendingForm();
+    if(state.meds.length===0){
+      card.innerHTML = '<div class="empty"><span class="ico">⚕</span>まだ頓服薬が登録されていません。<br><br>' +
+        '<button class="btn btn-primary btn-sm" data-action="goto-meds">頓服薬を登録する</button></div>';
+      var gm = card.querySelector('[data-action="goto-meds"]');
+      if(gm) gm.addEventListener("click", function(){ setView("meds"); });
+      return;
+    }
+
+    var selectedMed = medById(pendingForm.medId);
+
+    var html = '<div class="section-title">頓服を記録する</div><div class="section-sub" style="margin-bottom:16px;">服用したらすぐ記録しましょう。あとから経過観察カードで効果や副作用を追記できます。</div>';
+    html += '<div class="grid-2">';
+
+    html += '<div class="field"><label for="lf-med-search">薬剤</label>';
+    html += '  <div class="combobox">';
+    html += '    <input class="input combobox-input" id="lf-med-search" type="text" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="lf-med-panel" placeholder="薬剤名・症状で検索" value="'+esc(selectedMed?selectedMed.name:"")+'">';
+    html += '    <span class="combobox-ico" aria-hidden="true">⌕</span>';
+    html += '    <input type="hidden" id="lf-med" value="'+esc(pendingForm.medId)+'">';
+    html += '    <div class="combobox-panel" id="lf-med-panel" hidden></div>';
+    html += '  </div>';
+    html += '  <div style="display:flex;gap:6px;flex-wrap:wrap;">';
+    html += '    <span class="badge badge-accent" id="lf-analgesic-badge"'+(selectedMed&&selectedMed.isAnalgesic?'':' hidden')+'>鎮痛薬</span>';
+    html += '    <span class="badge badge-warm" id="lf-narcotic-badge"'+(selectedMed&&selectedMed.isNarcotic?'':' hidden')+'>医療用麻薬</span>';
+    html += '  </div>';
+    html += '</div>';
+
+    html += '<div class="field"><label>服用時刻</label><input type="datetime-local" class="input" id="lf-time" value="'+pendingForm.takenAt+'"></div>';
+
+    html += '<div class="field" style="grid-column:1/-1;"><label>きっかけ・症状</label><div style="display:flex;gap:8px;flex-wrap:wrap;" id="lf-triggers">';
+    TRIGGERS.forEach(function(t){
+      html += '<button type="button" class="chip'+(pendingForm.trigger===t?" selected":"")+'" data-trigger="'+esc(t)+'">'+esc(t)+'</button>';
+    });
+    html += '</div></div>';
+
+    html += '<div class="field" id="lf-nrs-wrap" style="grid-column:1/-1;"'+(selectedMed&&selectedMed.isAnalgesic?'':' hidden')+'>';
+    html += '  <label>使用前の痛みの強さ（NRS）<span class="hint">鎮痛薬を使用する直前の痛みの強さです</span></label>';
+    html += '  <div style="display:flex;gap:6px;flex-wrap:wrap;" id="lf-nrs-chips">';
+    NRS_SCALE.forEach(function(n){
+      html += '<button type="button" class="chip'+(pendingForm.nrsBefore===n?" selected":"")+'" data-nrs="'+n+'" style="min-width:34px;justify-content:center;">'+n+'</button>';
+    });
+    html += '  </div>';
+    html += '  <span class="hint">0：痛みなし　10：これまでで最も強い痛み</span>';
+    html += '</div>';
+
+    html += '<div class="field" style="grid-column:1/-1;"><label>1回に飲む量</label><div style="display:flex;gap:6px;flex-wrap:wrap;" id="lf-amount-chips">'+amountChipsHtml(selectedMed?selectedMed.unit:"回分")+'</div></div>';
+    html += '<div class="field"><label>メモ<span class="hint">任意</span></label><input class="input" id="lf-note" value="'+esc(pendingForm.note)+'" placeholder="例：外出前に念のため"></div>';
+
+    html += '</div>';
+    html += '<button class="btn btn-primary" style="margin-top:16px;" id="lf-submit">頓服を記録する</button>';
+
+    card.innerHTML = html;
+    wireLogForm();
+  }
+
+  function amountChipsHtml(unit){
+    var html = "";
+    AMOUNT_OPTIONS.forEach(function(n){
+      var label = n+unit;
+      html += '<button type="button" class="chip'+(pendingForm.amount===label?" selected":"")+'" data-amount="'+esc(label)+'" style="min-width:52px;justify-content:center;">'+esc(label)+'</button>';
+    });
+    return html;
+  }
+  function wireAmountChips(){
+    document.querySelectorAll("#lf-amount-chips .chip").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        pendingForm.amount = btn.getAttribute("data-amount");
+        document.querySelectorAll("#lf-amount-chips .chip").forEach(function(b){ b.classList.remove("selected"); });
+        btn.classList.add("selected");
+      });
+    });
+  }
+
+  function filterMeds(query){
+    var q = (query||"").trim();
+    if(!q) return state.meds.slice();
+    return state.meds.filter(function(m){
+      return m.name.indexOf(q)>-1 || (m.indication && m.indication.indexOf(q)>-1);
+    });
+  }
+
+  function wireMedCombobox(){
+    var searchInput = document.getElementById("lf-med-search");
+    var hiddenInput = document.getElementById("lf-med");
+    var panel = document.getElementById("lf-med-panel");
+    var comboItems = [];
+    var comboActiveIndex = -1;
+
+    function renderComboPanel(query){
+      comboItems = filterMeds(query);
+      comboActiveIndex = comboItems.length ? 0 : -1;
+      if(comboItems.length===0){
+        panel.innerHTML = '<div class="combobox-empty">該当する頓服薬が見つかりません<br>' +
+          '<button type="button" class="btn btn-sm" data-action="combo-goto-meds">＋ 新しい頓服薬を登録</button></div>';
+      } else {
+        panel.innerHTML = comboItems.map(function(m,i){
+          return '<div class="combobox-item'+(i===0?" active":"")+'" data-id="'+m.id+'" data-index="'+i+'">' +
+            '<span class="cbi-name">'+esc(m.name)+'</span>' +
+            '<span class="cbi-meta">'+esc(m.indication||"")+'・1回 '+esc(m.dose+m.unit)+'</span>' +
+            '</div>';
+        }).join("");
+      }
+      panel.hidden = false;
+      searchInput.setAttribute("aria-expanded","true");
+      panel.querySelectorAll(".combobox-item").forEach(function(el){
+        el.addEventListener("mousedown", function(e){
+          e.preventDefault(); // keep input focused so blur doesn't close the panel before the click lands
+          selectMed(el.getAttribute("data-id"));
+        });
+      });
+      var gotoBtn = panel.querySelector('[data-action="combo-goto-meds"]');
+      if(gotoBtn) gotoBtn.addEventListener("mousedown", function(e){ e.preventDefault(); setView("meds"); });
+    }
+
+    function moveActive(dir){
+      if(!comboItems.length) return;
+      comboActiveIndex = (comboActiveIndex + dir + comboItems.length) % comboItems.length;
+      panel.querySelectorAll(".combobox-item").forEach(function(el,i){ el.classList.toggle("active", i===comboActiveIndex); });
+      var activeEl = panel.querySelector('.combobox-item[data-index="'+comboActiveIndex+'"]');
+      if(activeEl) activeEl.scrollIntoView({block:"nearest"});
+    }
+
+    function selectMed(id){
+      var m = medById(id);
+      if(!m) return;
+      pendingForm.medId = id;
+      pendingForm.amount = m.dose+m.unit;
+      hiddenInput.value = id;
+      searchInput.value = m.name;
+      var amountWrap = document.getElementById("lf-amount-chips");
+      if(amountWrap){ amountWrap.innerHTML = amountChipsHtml(m.unit); wireAmountChips(); }
+      closeCombo();
+      syncMedFlagsSection();
+    }
+
+    function closeCombo(){
+      panel.hidden = true;
+      panel.innerHTML = "";
+      searchInput.setAttribute("aria-expanded","false");
+      comboItems = []; comboActiveIndex = -1;
+      var current = medById(pendingForm.medId);
+      searchInput.value = current ? current.name : "";
+    }
+
+    searchInput.addEventListener("focus", function(){ searchInput.select(); renderComboPanel(""); });
+    searchInput.addEventListener("input", function(){ renderComboPanel(searchInput.value); });
+    searchInput.addEventListener("blur", function(){ setTimeout(closeCombo, 120); });
+    searchInput.addEventListener("keydown", function(e){
+      if(panel.hidden && (e.key==="ArrowDown"||e.key==="ArrowUp")){ renderComboPanel(searchInput.value); return; }
+      if(e.key==="ArrowDown"){ e.preventDefault(); moveActive(1); }
+      else if(e.key==="ArrowUp"){ e.preventDefault(); moveActive(-1); }
+      else if(e.key==="Enter"){ e.preventDefault(); if(comboActiveIndex>-1 && comboItems[comboActiveIndex]) selectMed(comboItems[comboActiveIndex].id); }
+      else if(e.key==="Escape"){ closeCombo(); searchInput.blur(); }
+    });
+  }
+
+  function syncMedFlagsSection(){
+    var med = medById(pendingForm.medId);
+    var isAnalgesic = !!(med && med.isAnalgesic);
+    var isNarcotic = !!(med && med.isNarcotic);
+    var wrap = document.getElementById("lf-nrs-wrap");
+    var analgesicBadge = document.getElementById("lf-analgesic-badge");
+    var narcoticBadge = document.getElementById("lf-narcotic-badge");
+    if(wrap) wrap.hidden = !isAnalgesic;
+    if(analgesicBadge) analgesicBadge.hidden = !isAnalgesic;
+    if(narcoticBadge) narcoticBadge.hidden = !isNarcotic;
+    if(!isAnalgesic) pendingForm.nrsBefore = null;
+  }
+
+  function wireLogForm(){
+    wireMedCombobox();
+    syncMedFlagsSection();
+    document.getElementById("lf-time").addEventListener("change", function(e){ pendingForm.takenAt = e.target.value; });
+    wireAmountChips();
+    document.getElementById("lf-note").addEventListener("input", function(e){ pendingForm.note = e.target.value; });
+    document.querySelectorAll("#lf-triggers .chip").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        pendingForm.trigger = btn.getAttribute("data-trigger");
+        document.querySelectorAll("#lf-triggers .chip").forEach(function(b){ b.classList.remove("selected"); });
+        btn.classList.add("selected");
+      });
+    });
+    document.querySelectorAll("#lf-nrs-chips .chip").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        pendingForm.nrsBefore = parseInt(btn.getAttribute("data-nrs"),10);
+        document.querySelectorAll("#lf-nrs-chips .chip").forEach(function(b){ b.classList.remove("selected"); });
+        btn.classList.add("selected");
+      });
+    });
+    document.getElementById("lf-submit").addEventListener("click", function(){
+      if(!pendingForm.medId){ toast("薬剤を選択してください", true); return; }
+      if(!pendingForm.trigger){ toast("きっかけ・症状を選んでください", true); return; }
+      var currentMed = medById(pendingForm.medId);
+      var isAnalgesic = !!(currentMed && currentMed.isAnalgesic);
+      if(isAnalgesic && pendingForm.nrsBefore===null){ toast("使用前のNRS（痛みの強さ）を選択してください", true); return; }
+      var iso = new Date(pendingForm.takenAt).toISOString();
+      var dose = { id: uid("dose"), medId: pendingForm.medId, takenAt: iso, trigger: pendingForm.trigger,
+        note: pendingForm.note, checkins: [], status: "monitoring",
+        nrsBefore: isAnalgesic ? pendingForm.nrsBefore : null };
+      state.doses.unshift(dose);
+      saveState();
+      resetPendingForm();
+      renderLogView();
+      renderNav();
+      toast("記録しました。経過観察中に追加されます。");
+    });
+  }
+
+  /* ============ HISTORY VIEW ============ */
+  var historyFilter = { medId: "all", range: "30" };
+
+  function renderHistoryView(){
+    var filterEl = document.getElementById("history-filters");
+    var html = '<div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">';
+    html += '<select class="input" id="hf-med" style="width:auto;min-width:160px;"><option value="all">すべての薬剤</option>';
+    state.meds.forEach(function(m){ html += '<option value="'+m.id+'"'+(historyFilter.medId===m.id?" selected":"")+'>'+esc(m.name)+'</option>'; });
+    html += '</select>';
+    html += '<select class="input" id="hf-range" style="width:auto;">';
+    [["7","直近7日"],["30","直近30日"],["90","直近90日"],["all","全期間"]].forEach(function(p){
+      html += '<option value="'+p[0]+'"'+(historyFilter.range===p[0]?" selected":"")+'>'+p[1]+'</option>';
+    });
+    html += '</select></div>';
+    filterEl.innerHTML = html;
+    document.getElementById("hf-med").addEventListener("change", function(e){ historyFilter.medId = e.target.value; renderHistoryView(); });
+    document.getElementById("hf-range").addEventListener("change", function(e){ historyFilter.range = e.target.value; renderHistoryView(); });
+
+    var doses = filteredDoses();
+    var listEl = document.getElementById("history-list");
+    if(doses.length===0){
+      listEl.innerHTML = '<div class="card card-pad empty"><span class="ico">☰</span>条件に一致する記録がありません。</div>';
+      return;
+    }
+    doses.sort(function(a,b){ return new Date(b.takenAt)-new Date(a.takenAt); });
+
+    var groups = [];
+    doses.forEach(function(d){
+      var label = fmtDayLabel(d.takenAt);
+      var g = groups.find(function(g){ return g.label===label; });
+      if(!g){ g = {label:label, items:[]}; groups.push(g); }
+      g.items.push(d);
+    });
+
+    var html2 = '';
+    groups.forEach(function(g){
+      html2 += '<div style="font-size:12.5px;font-weight:700;color:var(--ink-muted);margin:18px 0 8px;">'+g.label+'</div>';
+      html2 += '<div style="display:flex;flex-direction:column;gap:10px;">';
+      g.items.forEach(function(d){ html2 += renderHistoryCard(d); });
+      html2 += '</div>';
+    });
+    listEl.innerHTML = html2;
+    wireHistoryCards();
+  }
+
+  function filteredDoses(){
+    var cutoff = historyFilter.range==="all" ? null : Date.now() - parseInt(historyFilter.range,10)*86400000;
+    return state.doses.filter(function(d){
+      if(historyFilter.medId!=="all" && d.medId!==historyFilter.medId) return false;
+      if(cutoff && new Date(d.takenAt).getTime() < cutoff) return false;
+      return true;
+    });
+  }
+
+  var expandedHistoryId = null;
+
+  function renderHistoryCard(dose){
+    var med = medById(dose.medId);
+    var onset = onsetMinutes(dose);
+    var fin = finalCheckin(dose);
+    var effects = allSideEffects(dose);
+    var expanded = expandedHistoryId===dose.id;
+
+    var badges = dose.status==="monitoring"
+      ? '<span class="badge badge-warm"><span class="dot dot-warm"></span>経過観察中</span>'
+      : '<span class="badge badge-good">完了</span>';
+    if(onset!==null) badges += ' <span class="badge badge-accent">発現まで <span class="num">'+fmtElapsed(onset)+'</span></span>';
+    var nrsAfter = nrsAfterValue(dose);
+    if(dose.nrsBefore!=null && nrsAfter!=null){
+      var nrsCls = nrsAfter < dose.nrsBefore ? "good" : "critical";
+      badges += ' <span class="badge badge-'+nrsCls+'">NRS <span class="num">'+dose.nrsBefore+' → '+nrsAfter+'</span></span>';
+    } else if(dose.nrsBefore!=null){
+      badges += ' <span class="badge badge-accent">使用前 NRS <span class="num">'+dose.nrsBefore+'</span></span>';
+    }
+    if(effects.length) badges += ' <span class="badge badge-'+severityMeta(worstSeverity(effects)).cls+'">副作用 '+effects.length+'件</span>';
+    else if(hasNoSideEffectCheckin(dose)) badges += ' <span class="badge badge-good">副作用なし確認済み</span>';
+    if(fin) badges += ' <span class="badge badge-neutral">'+"★".repeat(fin.rating)+'<span style="opacity:.35;">'+"★".repeat(5-fin.rating)+'</span></span>';
+
+    var html = '<div class="card card-pad">';
+    html += '<div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-start;">';
+    html += '<div><div style="font-weight:700;font-size:15px;">'+esc(med?med.name:"（削除された薬）")+' <span style="font-weight:400;color:var(--ink-muted);font-size:12.5px;">'+esc(med?med.dose+med.unit:"")+'</span></div>';
+    html += '<div style="font-size:12.5px;color:var(--ink-secondary);margin-top:2px;">'+esc(dose.trigger)+'・服用 <span class="num">'+fmtTimeOnly(dose.takenAt)+'</span></div></div>';
+    html += '<div style="display:flex;gap:6px;flex-shrink:0;">';
+    html += '<button class="btn btn-sm btn-ghost" data-action="hx-toggle" data-id="'+dose.id+'">'+(expanded?"閉じる":"詳細")+'</button>';
+    html += '<button class="btn btn-sm" data-action="hx-delete" data-id="'+dose.id+'">削除</button>';
+    html += '</div>';
+    html += '</div>';
+    html += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;">'+badges+'</div>';
+
+    if(expanded){
+      html += '<div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:10px;">';
+      if(dose.nrsBefore!=null){
+        html += '<div style="display:flex;gap:10px;font-size:13px;">';
+        html += '<div class="num" style="color:var(--ink-muted);min-width:64px;">+0分</div>';
+        html += '<div style="flex:1;">使用前NRS：'+dose.nrsBefore+'</div>';
+        html += '</div>';
+      }
+      if(dose.checkins.length===0 && dose.nrsBefore==null){
+        html += '<div class="section-sub">まだ経過の記録がありません。</div>';
+      }
+      dose.checkins.forEach(function(c){
+        html += '<div style="display:flex;gap:10px;font-size:13px;">';
+        html += '<div class="num" style="color:var(--ink-muted);min-width:64px;">+'+fmtElapsed(c.elapsedMin)+'</div>';
+        html += '<div style="flex:1;">';
+        if(c.type==="onset"){
+          html += '効果発現：'+(EFFECT_LEVELS.find(function(l){return l.v===c.effectLevel;})||{}).label;
+        } else if(c.type==="side-effect"){
+          html += '副作用：'+c.sideEffects.map(function(e){ return e.name+'（'+severityMeta(e.severity).label+'）'; }).join("、");
+        } else if(c.type==="no-side-effect"){
+          html += '副作用：なし（確認済み）';
+        } else if(c.type==="final"){
+          var changeLabel = {improved:"改善した", same:"変わらない", worse:"悪化した"}[c.symptomChange] || "";
+          html += '評価完了：'+changeLabel+'・'+"★".repeat(c.rating);
+          if(c.nrs!=null) html += '・使用後NRS '+c.nrs;
+          if(c.note) html += '<div style="color:var(--ink-secondary);margin-top:2px;">'+esc(c.note)+'</div>';
+        }
+        html += '</div></div>';
+      });
+      if(dose.note) html += '<div class="section-sub">メモ：'+esc(dose.note)+'</div>';
+      html += '</div>';
+    }
+    html += '</div>';
+    return html;
+  }
+
+  function wireHistoryCards(){
+    document.querySelectorAll('[data-action="hx-toggle"]').forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var id = btn.getAttribute("data-id");
+        expandedHistoryId = expandedHistoryId===id ? null : id;
+        renderHistoryView();
+      });
+    });
+    document.querySelectorAll('[data-action="hx-delete"]').forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var id = btn.getAttribute("data-id");
+        if(btn.getAttribute("data-armed")==="1"){
+          state.doses = state.doses.filter(function(d){ return d.id!==id; });
+          saveState();
+          renderHistoryView();
+          renderNav();
+          toast("削除しました");
+        } else {
+          btn.setAttribute("data-armed","1");
+          btn.textContent = "本当に削除";
+          btn.classList.add("btn-danger-outline");
+          setTimeout(function(){ if(btn.isConnected){ btn.setAttribute("data-armed","0"); btn.textContent="削除"; btn.classList.remove("btn-danger-outline"); } }, 3000);
+        }
+      });
+    });
+  }
+
+  /* ============ SUMMARY VIEW ============ */
+  var summaryRange = "30";
+
+  function renderSummaryView(){
+    var cutoff = summaryRange==="all" ? null : Date.now() - parseInt(summaryRange,10)*86400000;
+    var doses = state.doses.filter(function(d){ return !cutoff || new Date(d.takenAt).getTime() >= cutoff; });
+    var completedDoses = doses.filter(function(d){ return d.status==="completed"; });
+
+    var totalCount = doses.length;
+    var onsetVals = doses.map(onsetMinutes).filter(function(v){ return v!==null; });
+    var avgOnset = onsetVals.length ? onsetVals.reduce(function(a,b){return a+b;},0)/onsetVals.length : null;
+    var improvedCount = completedDoses.filter(function(d){ var f=finalCheckin(d); return f && f.symptomChange==="improved"; }).length;
+    var improveRate = completedDoses.length ? Math.round(improvedCount/completedDoses.length*100) : null;
+    var withSE = doses.filter(function(d){ return allSideEffects(d).length>0; }).length;
+    var seRate = totalCount ? Math.round(withSE/totalCount*100) : 0;
+
+    var el = document.getElementById("summary-content");
+    var html = '';
+
+    html += '<div class="card card-pad" style="margin-bottom:18px;display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;">';
+    html += '  <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;">';
+    html += '    <div class="field" style="min-width:160px;"><label>対象の方</label><input class="input" id="sm-patient" value="山田 花子 さん"></div>';
+    html += '    <div class="field"><label>集計期間</label><select class="input" id="sm-range" style="width:auto;">';
+    [["7","直近7日"],["30","直近30日"],["90","直近90日"],["all","全期間"]].forEach(function(p){
+      html += '<option value="'+p[0]+'"'+(summaryRange===p[0]?" selected":"")+'>'+p[1]+'</option>';
+    });
+    html += '    </select></div>';
+    html += '  </div>';
+    html += '  <div class="section-sub" style="max-width:260px;">自己申告に基づく記録です。診察・服薬指導の参考としてご活用ください。</div>';
+    html += '</div>';
+
+    html += '<div class="grid-4" style="margin-bottom:18px;">';
+    html += statTile("総服用回数", totalCount+" 回", "accent");
+    html += statTile("平均効果発現時間", avgOnset!==null ? fmtElapsed(avgOnset) : "—", "warm");
+    html += statTile("症状改善率", improveRate!==null ? improveRate+"%" : "—", "good");
+    html += statTile("副作用報告率", seRate+"%", seRate>25?"warning":"neutral");
+    html += '</div>';
+
+    html += '<div class="grid-11-1">';
+    html += '<div class="card card-pad">'+renderOnsetChart(doses)+'</div>';
+    html += '<div class="card card-pad">'+renderSideEffectChart(doses)+'</div>';
+    html += '</div>';
+
+    var analgesicNrsHtml = renderAnalgesicNrsSection(doses);
+    if(analgesicNrsHtml) html += '<div class="card card-pad" style="margin-top:16px;">'+analgesicNrsHtml+'</div>';
+
+    html += '<div class="card card-pad" style="margin-top:16px;">'+renderDrugTable(doses)+'</div>';
+
+    el.innerHTML = html;
+    document.getElementById("sm-range").addEventListener("change", function(e){ summaryRange = e.target.value; renderSummaryView(); });
+  }
+
+  function avgLabel(n){ return (Math.round(n*10)/10).toFixed(1); }
+
+  function renderAnalgesicNrsSection(doses){
+    var byMed = {};
+    doses.forEach(function(d){
+      if(!isAnalgesicDose(d)) return;
+      var after = nrsAfterValue(d);
+      if(d.nrsBefore==null || after==null) return;
+      if(!byMed[d.medId]) byMed[d.medId] = [];
+      byMed[d.medId].push({before:d.nrsBefore, after:after});
+    });
+    var rows = Object.keys(byMed).map(function(id){
+      var pairs = byMed[id];
+      var avgBefore = pairs.reduce(function(a,p){return a+p.before;},0)/pairs.length;
+      var avgAfter = pairs.reduce(function(a,p){return a+p.after;},0)/pairs.length;
+      return { med: medById(id), avgBefore:avgBefore, avgAfter:avgAfter, n:pairs.length };
+    }).sort(function(a,b){ return (b.avgBefore-b.avgAfter) - (a.avgBefore-a.avgAfter); });
+
+    if(rows.length===0) return "";
+
+    var hasNarcoticRow = rows.some(function(r){ return r.med && r.med.isNarcotic; });
+
+    var html = '<div class="section-title">鎮痛薬のNRS評価</div>';
+    html += '<div class="section-sub" style="margin-bottom:6px;">鎮痛薬の使用前後で、痛みの強さ（NRS 0〜10）がどう変化したか</div>';
+    html += '<div style="display:flex;flex-direction:column;gap:24px;margin-top:16px;">';
+    rows.forEach(function(r){
+      var delta = r.avgAfter - r.avgBefore;
+      var improved = delta < 0;
+      var dotColor = improved ? "var(--good)" : "var(--critical)";
+      var beforePct = (r.avgBefore/10*100);
+      var afterPct = (r.avgAfter/10*100);
+      var lo = Math.min(beforePct, afterPct), hi = Math.max(beforePct, afterPct);
+      html += '<div>';
+      html += '  <div style="display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;margin-bottom:10px;">';
+      html += '    <span style="font-weight:700;color:var(--ink);">'+esc(r.med?r.med.name:"")+(r.med&&r.med.isNarcotic?' <span class="badge badge-warm" style="font-weight:700;">医療用麻薬</span>':'')+'</span>';
+      html += '    <span class="section-sub" style="margin:0;">n='+r.n+'件</span>';
+      html += '  </div>';
+      html += '  <div style="position:relative;height:26px;">';
+      html += '    <div style="position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);height:6px;background:var(--surface-alt);border-radius:6px;"></div>';
+      html += '    <div style="position:absolute;top:50%;transform:translateY(-50%);height:3px;left:'+lo.toFixed(1)+'%;width:'+(hi-lo).toFixed(1)+'%;background:var(--ink-muted);opacity:0.5;border-radius:3px;"></div>';
+      html += '    <div style="position:absolute;top:50%;left:'+beforePct.toFixed(1)+'%;width:14px;height:14px;border-radius:50%;background:var(--surface);border:2px solid var(--ink-muted);transform:translate(-50%,-50%);"></div>';
+      html += '    <div style="position:absolute;top:50%;left:'+afterPct.toFixed(1)+'%;width:14px;height:14px;border-radius:50%;background:'+dotColor+';border:2px solid var(--surface);box-shadow:0 0 0 1px '+dotColor+';transform:translate(-50%,-50%);"></div>';
+      html += '  </div>';
+      html += '  <div style="display:flex;justify-content:space-between;font-size:10.5px;color:var(--ink-muted);margin-top:2px;"><span>0</span><span>5</span><span>10</span></div>';
+      html += '  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;font-size:12.5px;flex-wrap:wrap;gap:6px;">';
+      html += '    <span class="section-sub" style="margin:0;">○ 使用前 平均 <span class="num" style="color:var(--ink);">'+avgLabel(r.avgBefore)+'</span>　● 使用後 平均 <span class="num" style="color:var(--ink);">'+avgLabel(r.avgAfter)+'</span></span>';
+      html += '    <span class="num" style="font-weight:700;color:'+dotColor+';">'+(delta>0?'+':'')+avgLabel(delta)+'</span>';
+      html += '  </div>';
+      html += '</div>';
+    });
+    html += '</div>';
+    html += '<div class="section-sub" style="margin-top:16px;padding-top:12px;border-top:1px solid var(--border);">鎮痛薬の使用時は眠気などの副作用の有無もあわせて確認してください。'+(hasNarcoticRow?'医療用麻薬を含む場合は、便秘・呼吸抑制にも注意してください。':'')+'</div>';
+    return html;
+  }
+
+  function statTile(label, value, tone){
+    var toneVar = tone==="neutral" ? "var(--ink-secondary)" : "var(--"+tone+")";
+    return '<div class="card card-pad" style="padding:16px;">' +
+      '<div style="font-size:11.5px;color:var(--ink-muted);font-weight:700;letter-spacing:0.02em;">'+label+'</div>' +
+      '<div class="num" style="font-size:24px;font-weight:700;color:'+toneVar+';margin-top:4px;">'+value+'</div>' +
+      '</div>';
+  }
+
+  function renderOnsetChart(doses){
+    var byMed = {};
+    doses.forEach(function(d){
+      var om = onsetMinutes(d);
+      if(om===null) return;
+      if(!byMed[d.medId]) byMed[d.medId] = [];
+      byMed[d.medId].push(om);
+    });
+    var rows = Object.keys(byMed).map(function(id){
+      var vals = byMed[id];
+      var avg = vals.reduce(function(a,b){return a+b;},0)/vals.length;
+      return { med: medById(id), avg: avg, n: vals.length };
+    }).sort(function(a,b){ return a.avg-b.avg; });
+
+    var html = '<div class="section-title">薬剤別 平均効果発現時間</div><div class="section-sub" style="margin-bottom:14px;">服用から「効果を感じ始めた」までの平均時間</div>';
+    if(rows.length===0){ html += '<div class="empty" style="padding:20px 0;">まだ効果発現の記録がありません</div>'; return html; }
+    var max = Math.max.apply(null, rows.map(function(r){ return r.avg; })) * 1.15;
+    html += '<div style="display:flex;flex-direction:column;gap:12px;">';
+    rows.forEach(function(r){
+      var pct = Math.max(6, (r.avg/max)*100);
+      html += '<div>';
+      html += '  <div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:4px;"><span>'+esc(r.med?r.med.name:"")+'</span><span class="num" style="font-weight:700;">'+fmtElapsed(r.avg)+'</span></div>';
+      html += '  <div style="background:var(--surface-alt);border-radius:6px;height:10px;overflow:hidden;">';
+      html += '    <div style="background:var(--accent);width:'+pct.toFixed(1)+'%;height:100%;border-radius:6px;"></div>';
+      html += '  </div>';
+      html += '</div>';
+    });
+    html += '</div>';
+    return html;
+  }
+
+  function renderSideEffectChart(doses){
+    var counts = {};
+    doses.forEach(function(d){
+      allSideEffects(d).forEach(function(e){
+        if(!counts[e.name]) counts[e.name] = {n:0, worst:"mild"};
+        counts[e.name].n++;
+        var order = {mild:1,moderate:2,severe:3};
+        if(order[e.severity] > order[counts[e.name].worst]) counts[e.name].worst = e.severity;
+      });
+    });
+    var rows = Object.keys(counts).map(function(k){ return {name:k, n:counts[k].n, worst:counts[k].worst}; })
+      .sort(function(a,b){ return b.n-a.n; });
+
+    var html = '<div class="section-title">副作用の内訳</div><div class="section-sub" style="margin-bottom:14px;">報告された副作用の種類と件数（色は最も重い重症度）</div>';
+    if(rows.length===0){ html += '<div class="empty" style="padding:20px 0;">副作用の報告はありません</div>'; return html; }
+    var max = Math.max.apply(null, rows.map(function(r){ return r.n; }));
+    html += '<div style="display:flex;flex-direction:column;gap:12px;">';
+    rows.forEach(function(r){
+      var pct = Math.max(8, (r.n/max)*100);
+      var meta = severityMeta(r.worst);
+      html += '<div>';
+      html += '  <div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:4px;"><span><span class="dot dot-'+meta.cls+'" style="display:inline-block;margin-right:5px;"></span>'+esc(r.name)+'</span><span class="num" style="font-weight:700;">'+r.n+'件</span></div>';
+      html += '  <div style="background:var(--surface-alt);border-radius:6px;height:10px;overflow:hidden;">';
+      html += '    <div style="background:var(--'+meta.cls+');width:'+pct.toFixed(1)+'%;height:100%;border-radius:6px;"></div>';
+      html += '  </div>';
+      html += '</div>';
+    });
+    html += '</div>';
+    return html;
+  }
+
+  function renderDrugTable(doses){
+    var html = '<div class="section-title">薬剤別サマリー</div><div class="section-sub" style="margin-bottom:14px;">診察・服薬指導時にそのまま確認できる一覧です</div>';
+    html += '<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:13px;min-width:560px;">';
+    html += '<thead><tr style="text-align:left;color:var(--ink-muted);font-size:11.5px;">';
+    ["薬剤","服用回数","平均発現時間","改善率","副作用率"].forEach(function(h){
+      html += '<th style="padding:8px 10px;border-bottom:1px solid var(--border);font-weight:700;">'+h+'</th>';
+    });
+    html += '</tr></thead><tbody>';
+    state.meds.forEach(function(m){
+      var mDoses = doses.filter(function(d){ return d.medId===m.id; });
+      if(mDoses.length===0) return;
+      var onsetVals = mDoses.map(onsetMinutes).filter(function(v){ return v!==null; });
+      var avg = onsetVals.length ? fmtElapsed(onsetVals.reduce(function(a,b){return a+b;},0)/onsetVals.length) : "—";
+      var completed = mDoses.filter(function(d){ return d.status==="completed"; });
+      var improved = completed.filter(function(d){ var f=finalCheckin(d); return f && f.symptomChange==="improved"; }).length;
+      var impRate = completed.length ? Math.round(improved/completed.length*100)+"%" : "—";
+      var withSE = mDoses.filter(function(d){ return allSideEffects(d).length>0; }).length;
+      var seRate = Math.round(withSE/mDoses.length*100)+"%";
+      html += '<tr>';
+      html += '<td style="padding:9px 10px;border-bottom:1px solid var(--border);font-weight:600;">'+esc(m.name)+'</td>';
+      html += '<td class="num" style="padding:9px 10px;border-bottom:1px solid var(--border);">'+mDoses.length+'</td>';
+      html += '<td class="num" style="padding:9px 10px;border-bottom:1px solid var(--border);">'+avg+'</td>';
+      html += '<td class="num" style="padding:9px 10px;border-bottom:1px solid var(--border);">'+impRate+'</td>';
+      html += '<td class="num" style="padding:9px 10px;border-bottom:1px solid var(--border);">'+seRate+'</td>';
+      html += '</tr>';
+    });
+    html += '</tbody></table></div>';
+    return html;
+  }
+
+  /* ============ MEDS VIEW ============ */
+  var newMedDraft = null;
+
+  function renderMedsView(){
+    var el = document.getElementById("meds-content");
+    var html = '<div style="display:flex;flex-direction:column;gap:12px;margin-bottom:18px;">';
+    if(state.meds.length===0){
+      html += '<div class="card card-pad empty"><span class="ico">⚕</span>まだ頓服薬が登録されていません。</div>';
+    }
+    state.meds.forEach(function(m){
+      var last = state.doses.filter(function(d){ return d.medId===m.id; }).sort(function(a,b){ return new Date(b.takenAt)-new Date(a.takenAt); })[0];
+      html += '<div class="card card-pad">';
+      html += '<div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;">';
+      html += '<div><div style="font-weight:700;font-size:15px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">'+esc(m.name) +
+        (m.isAnalgesic ? ' <span class="badge badge-accent">鎮痛薬</span>' : '') +
+        (m.isNarcotic ? ' <span class="badge badge-warm">医療用麻薬</span>' : '') + '</div>';
+      html += '<div style="font-size:12.5px;color:var(--ink-secondary);margin-top:2px;">1回 '+esc(m.dose)+esc(m.unit)+'・'+esc(m.indication)+'・1日'+m.maxPerDay+'回まで</div>';
+      html += '<div style="font-size:12px;color:var(--ink-muted);margin-top:4px;">処方：'+esc(m.prescriber||"—")+'</div>';
+      if(last) html += '<div style="font-size:12px;color:var(--ink-muted);margin-top:2px;">最終服用：'+fmtClock(last.takenAt)+'</div>';
+      html += '</div>';
+      html += '<div style="display:flex;gap:6px;align-items:flex-start;"><button class="btn btn-sm" data-action="del-med" data-id="'+m.id+'">削除</button></div>';
+      html += '</div></div>';
+    });
+    html += '</div>';
+
+    html += '<div class="card card-pad">';
+    html += '<div class="section-title">新しい頓服薬を登録</div>';
+    html += '<div class="grid-2" style="margin-top:14px;">';
+    html += '<div class="field" style="grid-column:1/-1;"><label>薬剤名</label><input class="input" id="nm-name" placeholder="例：ロキソニン錠60mg"></div>';
+    html += '<div class="field"><label>1回量</label><input class="input" id="nm-dose" placeholder="1"></div>';
+    html += '<div class="field"><label>単位</label><input class="input" id="nm-unit" placeholder="錠"></div>';
+    html += '<div class="field"><label>適応症状</label><input class="input" id="nm-indication" placeholder="頭痛・生理痛"></div>';
+    html += '<div class="field"><label>1日の上限回数</label><input class="input" id="nm-max" type="number" min="1" placeholder="3"></div>';
+    html += '<div class="field" style="grid-column:1/-1;"><label>処方医・薬局<span class="hint">任意</span></label><input class="input" id="nm-prescriber" placeholder="〇〇クリニック"></div>';
+    html += '</div>';
+    html += '<div style="display:flex;flex-direction:column;gap:8px;margin-top:14px;">';
+    html += '  <label style="display:flex;align-items:flex-start;gap:9px;padding:10px 12px;background:var(--surface-alt);border-radius:9px;cursor:pointer;">';
+    html += '    <input type="checkbox" id="nm-analgesic" style="width:16px;height:16px;margin-top:2px;accent-color:var(--accent);flex-shrink:0;">';
+    html += '    <span><span style="font-size:13px;font-weight:700;">鎮痛薬として登録する</span><br>';
+    html += '    <span class="hint">痛みに対して使う薬です。選択すると、記録画面で使用前後のNRS（痛みの強さ）を評価できるようになります。</span></span>';
+    html += '  </label>';
+    html += '  <label style="display:flex;align-items:flex-start;gap:9px;padding:10px 12px;background:var(--surface-alt);border-radius:9px;cursor:pointer;">';
+    html += '    <input type="checkbox" id="nm-narcotic" style="width:16px;height:16px;margin-top:2px;accent-color:var(--accent);flex-shrink:0;">';
+    html += '    <span><span style="font-size:13px;font-weight:700;">医療用麻薬として登録する</span><br>';
+    html += '    <span class="hint">モルヒネ・オキシコドン・フェンタニルなど、法規制の対象となる医療用麻薬です。分類の記録用で、NRS評価の表示は「鎮痛薬」の設定で決まります。</span></span>';
+    html += '  </label>';
+    html += '</div>';
+    html += '<button class="btn btn-primary" style="margin-top:14px;" id="nm-submit">登録する</button>';
+    html += '</div>';
+
+    el.innerHTML = html;
+    wireMedsView();
+  }
+
+  function wireMedsView(){
+    document.querySelectorAll('[data-action="del-med"]').forEach(function(btn){
+      btn.addEventListener("click", function(){
+        if(btn.getAttribute("data-armed")==="1"){
+          var id = btn.getAttribute("data-id");
+          state.meds = state.meds.filter(function(m){ return m.id!==id; });
+          saveState();
+          renderMedsView();
+          renderNav();
+          toast("削除しました");
+        } else {
+          btn.setAttribute("data-armed","1");
+          btn.textContent = "本当に削除";
+          btn.classList.add("btn-danger-outline");
+          setTimeout(function(){ if(btn.isConnected){ btn.setAttribute("data-armed","0"); btn.textContent="削除"; btn.classList.remove("btn-danger-outline"); } }, 3000);
+        }
+      });
+    });
+    document.getElementById("nm-submit").addEventListener("click", function(){
+      var name = document.getElementById("nm-name").value.trim();
+      var dose = document.getElementById("nm-dose").value.trim() || "1";
+      var unit = document.getElementById("nm-unit").value.trim() || "回分";
+      var indication = document.getElementById("nm-indication").value.trim();
+      var maxPerDay = parseInt(document.getElementById("nm-max").value,10) || 3;
+      var prescriber = document.getElementById("nm-prescriber").value.trim();
+      var isAnalgesic = document.getElementById("nm-analgesic").checked;
+      var isNarcotic = document.getElementById("nm-narcotic").checked;
+      if(!name){ toast("薬剤名を入力してください", true); return; }
+      state.meds.push({ id: uid("med"), name:name, dose:dose, unit:unit, indication:indication, prescriber:prescriber, maxPerDay:maxPerDay, isAnalgesic:isAnalgesic, isNarcotic:isNarcotic });
+      saveState();
+      renderMedsView();
+      toast("「"+name+"」を登録しました");
+    });
+    var narcoticCheckbox = document.getElementById("nm-narcotic");
+    var analgesicCheckbox = document.getElementById("nm-analgesic");
+    if(narcoticCheckbox && analgesicCheckbox){
+      narcoticCheckbox.addEventListener("change", function(){
+        // medical narcotics registered here are used as analgesics, so default the pairing —
+        // the person can still uncheck it if that's not the case.
+        if(narcoticCheckbox.checked) analgesicCheckbox.checked = true;
+      });
+    }
+  }
+
+  /* ============ TOAST ============ */
+  var toastTimer = null;
+  function toast(msg, isWarn){
+    var el = document.getElementById("tp-toast");
+    if(!el){
+      el = document.createElement("div");
+      el.id = "tp-toast";
+      el.style.cssText = "position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(0);" +
+        "background:var(--ink);color:var(--bg);padding:11px 18px;border-radius:10px;font-size:13px;" +
+        "box-shadow:var(--shadow-lg);z-index:100;max-width:86vw;text-align:center;transition:opacity .2s ease;";
+      document.body.appendChild(el);
+    }
+    el.style.background = isWarn ? "var(--critical)" : "var(--ink)";
+    el.style.color = isWarn ? "#fff" : "var(--bg)";
+    el.textContent = msg;
+    el.style.opacity = "1";
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ el.style.opacity = "0"; }, 2600);
+  }
+
+  function esc(s){
+    return String(s==null?"":s).replace(/[&<>"']/g, function(c){
+      return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+    });
+  }
+
+  /* ============ INIT ============ */
+  resetPendingForm();
+  renderNav();
+  renderLogView();
+  setInterval(function(){ if(activeView==="log") renderMonitoringZone(); }, 20000);
+
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "name": "TONPUKU+ | 頓服の記録と評価",
+  "short_name": "TONPUKU+",
+  "description": "頓服薬の服用記録・効果評価アプリ",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#10201A",
+  "theme_color": "#3FA9E0",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
